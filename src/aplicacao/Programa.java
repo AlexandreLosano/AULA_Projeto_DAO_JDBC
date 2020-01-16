@@ -2,6 +2,7 @@ package aplicacao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import model.dao.FabricaDao;
 import model.dao.VendedorDao;
@@ -11,6 +12,8 @@ import modelo.entidade.Vendedor;
 public class Programa {
 
 	public static void main(String[] args) {
+		
+		Scanner sc = new Scanner(System.in);
 		
 		VendedorDao vendedorDAo = FabricaDao.criarVendedorDao();
 		
@@ -42,6 +45,13 @@ public class Programa {
 		vendedorDAo.update(vend);
 		System.out.println("Feito, atualizacao");
 		
+		System.out.println("\n==== teste 8: DELETE");
+		System.out.println("Entre com o ID");
+		int id = sc.nextInt();
+		vendedorDAo.deleteById(id);
+		System.out.println("Feio!!!");
+		
+		sc.close();
 	}
 
 }
