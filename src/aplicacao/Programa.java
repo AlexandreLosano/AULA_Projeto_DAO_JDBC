@@ -2,9 +2,11 @@ package aplicacao;
 
 
 
+import java.util.List;
+
 import model.dao.FabricaDao;
 import model.dao.VendedorDao;
-
+import modelo.entidade.Departamento;
 import modelo.entidade.Vendedor;
 
 public class Programa {
@@ -15,8 +17,14 @@ public class Programa {
 		
 		System.out.println("==== teste 1: vendedor por ID");
 		Vendedor vend = vendedorDAo.findById(3);
-	
 		System.out.println(vend);
+		
+		System.out.println("\n==== teste 2: vendedor por ID");
+		Departamento dep1 = new Departamento(2, null);
+		List<Vendedor> list = vendedorDAo.findDep(dep1);
+		for (Vendedor obj : list) {
+			System.out.println(obj);
+		}
 	}
 
 }

@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DbException;
@@ -52,7 +55,7 @@ public class VendedorDaoImlJDBC implements VendedorDao{
 			rs = st.executeQuery();
 			if (rs.next()) {
 				Departamento dep = chamarDepartamento(rs);
-				Vendedor vend = chmarVendedor(rs, dep); 
+				Vendedor vend = chamarVendedor(rs, dep); 
 				return vend;
 			}
 			return null;
@@ -62,11 +65,11 @@ public class VendedorDaoImlJDBC implements VendedorDao{
 		}
 		finally {
 			DB.fecharResultSet(rs);
-			DB.desconectar();
+			DB.fecharStatement(st);
 		}
 	}
 
-	private Vendedor chmarVendedor(ResultSet rs, Departamento dep) throws SQLException {
+	private Vendedor chamarVendedor(ResultSet rs, Departamento dep) throws SQLException {
 		Vendedor vend = new Vendedor();
 		vend.setId(rs.getInt("Id"));
 		vend.setNome(rs.getString("Nome"));
@@ -88,5 +91,45 @@ public class VendedorDaoImlJDBC implements VendedorDao{
 	public List<Vendedor> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Vendedor> findDep(Departamento departameto) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"select * "
+					+"from vendedor v "
+					+"inner join  departamento dp on v.DepartamentoId = dp.DepId "
+					+"where dp.DepId = ? "
+					+"order by nome");
+			st.setInt(1, departameto.getId());
+			rs = st.executeQuery();
+			
+			List<Vendedor> list = new ArrayList<>();
+			Map<Integer, Departamento> map = new HashMap<>();
+			
+			while (rs.next()) {
+				
+				Departamento dep = map.get(rs.getInt("DepId"));
+				
+				if(dep == null) {
+					dep = chamarDepartamento(rs);
+					map.put(rs.getInt("DepId"), dep);
+				}
+				
+				Vendedor vend = chamarVendedor(rs, dep); 
+				list.add(vend);
+			}
+			return list;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.fecharResultSet(rs);
+			DB.fecharStatement(st);
+		}
 	}
 }
