@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +26,40 @@ public class VendedorDaoImlJDBC implements VendedorDao{
 	
 	@Override
 	public void insert(Vendedor obj) {
-		// TODO Auto-generated method stub
-		
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement(
+					"insert into vendedor\r\n" + 
+					"(Nome, Email, Aniversario, Salario, DepartamentoId)\r\n" + 
+					"Values\r\n" + 
+					"(?,?,?,?,?)", 
+					Statement.RETURN_GENERATED_KEYS);
+			st.setString(1, obj.getNome());
+			st.setString(2, obj.getEmail());
+			st.setDate(3, new java.sql.Date(obj.getAniversario().getTime()));
+			st.setDouble(4, obj.getSalario());
+			st.setInt(5, obj.getDepartamento().getId());
+			
+			int linhasafetadas = st.executeUpdate();
+			
+			if (linhasafetadas>0) {
+				ResultSet rs = st.getGeneratedKeys();
+				if (rs.next()) {
+					int id = rs.getInt(1);
+					obj.setId(id);
+				}
+				DB.fecharResultSet(rs);
+			}
+			else {
+				throw new DbException("Nenhuma linha afetada");
+			}
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.fecharStatement(st);
+		}
 	}
 
 	@Override
