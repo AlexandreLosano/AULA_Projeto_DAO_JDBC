@@ -45,23 +45,14 @@ public class VendedorDaoImlJDBC implements VendedorDao{
 		try {
 			st = conn.prepareStatement(
 					"select * "
-					+"from vendedor v "
-					+"inner join  departamento dp "
+					+"from vendedor v inner join  departamento dp "
 					+"on v.DepartamentoId = dp.DepId "
 					+"where v.Id = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
-				Departamento dep = new Departamento();
-					dep.setId(rs.getInt("DepId"));
-					dep.setName(rs.getString("DepNome"));
-				Vendedor vend = new Vendedor();
-					vend.setId(rs.getInt("Id"));
-					vend.setNome(rs.getString("Nome"));
-					vend.setEmail(rs.getString("Email"));
-					vend.setSalario(rs.getDouble("Salario"));
-					vend.setAniversario(rs.getDate("Aniversario"));
-					vend.setDepartamento(dep);
+				Departamento dep = chamarDepartamento(rs);
+				Vendedor vend = chmarVendedor(rs, dep); 
 				return vend;
 			}
 			return null;
@@ -75,10 +66,27 @@ public class VendedorDaoImlJDBC implements VendedorDao{
 		}
 	}
 
+	private Vendedor chmarVendedor(ResultSet rs, Departamento dep) throws SQLException {
+		Vendedor vend = new Vendedor();
+		vend.setId(rs.getInt("Id"));
+		vend.setNome(rs.getString("Nome"));
+		vend.setEmail(rs.getString("Email"));
+		vend.setSalario(rs.getDouble("Salario"));
+		vend.setAniversario(rs.getDate("Aniversario"));
+		vend.setDepartamento(dep);
+		return vend;
+	}
+
+	private Departamento chamarDepartamento(ResultSet rs) throws SQLException {
+		Departamento dep = new Departamento();
+			dep.setId(rs.getInt("DepId"));
+			dep.setName(rs.getString("DepNome"));
+		return dep;
+	}
+
 	@Override
 	public List<Vendedor> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
