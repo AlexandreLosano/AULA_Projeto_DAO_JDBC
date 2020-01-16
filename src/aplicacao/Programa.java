@@ -18,8 +18,8 @@ public class Programa {
 		Vendedor vend = vendedorDAo.findById(3);
 		System.out.println(vend);
 		
-		System.out.println("\n==== teste 2: dep por ID");
-		Departamento dep1 = new Departamento(2, null);
+			System.out.println("\n==== teste 2: dep por ID");
+			Departamento dep1 = new Departamento(2, null);
 		List<Vendedor> list = vendedorDAo.findDep(dep1);
 		for (Vendedor obj : list) {
 			System.out.println(obj);
@@ -36,7 +36,11 @@ public class Programa {
 		vendedorDAo.insert(novoVendedor);
 		System.out.println("Feito, novo ID: " + novoVendedor.getId());
 		
-		
+		System.out.println("\n==== teste 8: UpDate");
+		vend = vendedorDAo.findById(1);
+		vend.setNome("Martha Waine");
+		vendedorDAo.update(vend);
+		System.out.println("Feito, atualizacao");
 		
 	}
 
